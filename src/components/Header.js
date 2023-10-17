@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MenuIcon, SearchIcon, ShoppingCartIcon } from "@heroicons/react/outline";
+import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 const Header = () => {
   return (
@@ -10,15 +10,15 @@ const Header = () => {
             src="https://links.papareact.com/f90"
             width={150}
             height={40}
-            objectFit="contain"
-            className="cursor-pointer"
+            alt="Fake Amazon"
+            className="cursor-pointer object-contain"
           />
         </div>
         {/*Search*/}
 
         <div className="bg-yellow-400 hover:bg-yellow-500 hidden sm:flex items-center h-10 rounded-md flex-grow cursor-pointer">
           <input type="text" className="p-2 h-full w-6 flex-grow rounded-l-md flex-shrink focus:outline-none px-4" />
-          <SearchIcon className="h-12 p-4" />
+          <MagnifyingGlassIcon className="h-12 p-4" />
         </div>
 
         {/*Right Section*/}
@@ -46,7 +46,7 @@ const Header = () => {
       {/*Bottom Section*/}
       <div className="flex items-center space-x-3 p-2 pl-6 bg-amazon_blue-light text-white text-sm">
         <p className="link flex items-center">
-          <MenuIcon className="h-6 mr-1" />
+          <Bars3Icon className="h-6 mr-1" />
           All
         </p>
         <p className="link">Prime Video</p>
