@@ -23,12 +23,22 @@ export default function Home({ products }) {
   );
 }
 
+const MAX_RATING = 5;
+const MIN_RATING = 1;
+
+// Generate a random number between 1 and 5
+const getRandomRating = () => {
+  return Math.floor(Math.random() * (MAX_RATING - MIN_RATING + 1)) + MIN_RATING;
+};
+
 export async function getServerSideProps(context) {
   const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
 
+  const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
+
   return {
     props: {
-      products,
+      products: productsWithRatings,
     },
   };
 }
