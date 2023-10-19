@@ -5,7 +5,9 @@ const Product = ({ id, title, price, rating, description, category, image }) => 
   return (
     <div className="relative flex flex-col m-5 bg-white z-30 p-10">
       <p className="absolute top-2 right-2 text-xs italic text-gray-400">{category}</p>
-      <Image src={image} height={200} width={200} alt={title} className="object-contain" />
+      <div className="w-full h-[200px] relative mx-auto">
+        <Image src={image} alt={title} className="object-contain" layout="fill" />
+      </div>
 
       <h4 className="my-3">{title}</h4>
 

@@ -1,17 +1,17 @@
 import Image from "next/image";
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Header = () => {
   return (
-    <header>
+    <header className="sticky top-0 z-50">
       <div className="flex items-center bg-amazon_blue p-1 flex-grow py-2">
-        <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
+        <div className="h-[40px] w-[150px] relative mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
             src="https://links.papareact.com/f90"
-            width={150}
-            height={40}
             alt="Fake Amazon"
             className="cursor-pointer object-contain"
+            layout="fill"
           />
         </div>
         {/*Search*/}
@@ -23,7 +23,7 @@ const Header = () => {
 
         {/*Right Section*/}
         <div className="text-white flex items-center text-xs space-x-6 mx-6 whitespace-nowrap">
-          <div className="link">
+          <div onClick={() => signIn()} className="link">
             <p>Hello, Ksenia</p>
             <p className="font-extrabold md:text-sm">Account & Lists</p>
           </div>
