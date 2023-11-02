@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { selectItems, selectTotal } from "../slices/basketSlice";
 import CheckoutProduct from "../components/CheckoutProduct";
 import { useSession } from "next-auth/react";
+import { loadStripe } from "@stripe/stripe-js";
 
 const Checkout = () => {
   const items = useSelector(selectItems);
@@ -47,14 +48,18 @@ const Checkout = () => {
                 <span className="font-bold"> ${total}</span>
               </h2>
 
-              <button
-                disabled={!session}
-                className={`button mt-2 ${
-                  !session && "from-gray-300 to-gray-500 border-gray-200 text-gray-200 cursor-not-allowed"
-                }`}
-              >
-                {!session ? "Sign in to checkout" : "Proceed to checkout"}
-              </button>
+              <form action="/api/create-checkout-session" method="POST">
+                <input type="hidden" name="data" value={JSON.stringify({ items, email: session?.user.email })} />
+                <button
+                  role="link"
+                  disabled={!session}
+                  className={`button mt-2 ${
+                    !session && "from-gray-300 to-gray-500 border-gray-200 text-gray-200 cursor-not-allowed"
+                  }`}
+                >
+                  {!session ? "Sign in to checkout" : "Proceed to checkout"}
+                </button>
+              </form>
             </>
           )}
         </div>
