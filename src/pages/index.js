@@ -2,6 +2,7 @@ import Head from "next/head";
 import Header from "../components/Header";
 import Banner from "../components/Banner";
 import ProductFeed from "../components/ProductFeed";
+import { getSession } from "next-auth/react";
 
 export default function Home({ products }) {
   return (
@@ -32,6 +33,7 @@ const getRandomRating = () => {
 };
 
 export async function getServerSideProps(context) {
+  const session = await getSession(context);
   const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
@@ -39,6 +41,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       products: productsWithRatings,
+      session,
     },
   };
 }
