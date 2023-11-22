@@ -59,6 +59,9 @@ const Checkout = () => {
                 >
                   {!session ? "Sign in to checkout" : "Proceed to checkout"}
                 </button>
+                <p className="text-xs font-bold mt-2">
+                  *Use this fake card number 4111 1111 1111 1111 in the payment form for a test checkout.*
+                </p>
               </form>
             </>
           )}
