@@ -37,7 +37,6 @@ export default async function handler(req, res) {
           images: JSON.stringify(items.map((item) => item.image)),
         },
       });
-      console.log(session.url, process.env.HOST);
       res.redirect(303, session.url);
     } catch (err) {
       res.status(err.statusCode || 500).json(err.message);
