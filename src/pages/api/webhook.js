@@ -1,7 +1,7 @@
 import { buffer } from "micro";
 import * as admin from "firebase-admin";
 
-const serviceAccount = require("../../../permissions.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_PERMISSIONS);
 
 //Secure a connection to Firebase from the backend
 const app = !admin.apps.length
@@ -44,14 +44,14 @@ export default async (req, res) => {
     try {
       event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
     } catch (error) {
-      return res.status(400).send(`Webhook error: ${err.message}`);
+      res.status(400).send(`Webhook error: ${err.message}`);
     }
 
     //Handle the checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       //FullFill the order
-      return fulfillOrder(session)
+      fulfillOrder(session)
         .then(() => res.status(200))
         .catch((err) => res.status(400).send(`Webhook Error: ${err.message}`));
     }
