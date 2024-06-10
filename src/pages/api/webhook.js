@@ -50,10 +50,17 @@ export default async (req, res) => {
     //Handle the checkout.session.completed event
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      //FullFill the order
-      fulfillOrder(session)
-        .then(() => res.status(200))
-        .catch((err) => res.status(400).send(`Webhook Error: ${err.message}`));
+
+      try {
+        await fulfillOrder(session);
+        res.status(200).send();
+      } catch (err) {
+        console.log("Order fulfillment error", err);
+        res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+    } else {
+      console.log(`Unhandled event type ${event.type}`);
+      res.status(400).send(`Webhook Error: Unhandled event type ${event.type}`);
     }
   }
 };
