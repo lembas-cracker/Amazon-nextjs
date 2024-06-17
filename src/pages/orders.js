@@ -39,7 +39,6 @@ export async function getServerSideProps(context) {
 
   //Get the users logged in credentials
   const session = await getSession(context);
-
   if (!session) {
     return {
       props: {},
