@@ -1,6 +1,9 @@
 import moment from "moment";
 
 const Order = ({ id, amount, amountShipping, items, timestamp, images }) => {
+  const quantity = items.map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
+  console.log(quantity);
+
   return (
     <div className="relative border rounded-md">
       <div className="flex items-center space-x-10 p-5 bg-gray-100 text-sm text-gray-600">
@@ -17,7 +20,7 @@ const Order = ({ id, amount, amountShipping, items, timestamp, images }) => {
         </div>
 
         <p className="text-sm whitespace-nowrap sm:text-xl self-end flex-1 text-right text-blue-500">
-          {items.length} items
+          {quantity} items
         </p>
         <p className="absolute top-2 right-2 w-40 lg:w-72 truncate text-xs whitespace-nowrap">ORDER № {id}</p>
       </div>

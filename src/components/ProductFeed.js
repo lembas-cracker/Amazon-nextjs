@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Product from "./Product";
 
 const ProductFeed = ({ products }) => {
@@ -16,7 +17,14 @@ const ProductFeed = ({ products }) => {
         />
       ))}
 
-      <img className="md:col-span-full" src="https://links.papareact.com/dyz" alt="" />
+      <Image
+        className="md:col-span-full max-w-screen-2xl mx-auto"
+        src="https://links.papareact.com/dyz"
+        alt=""
+        width={1500}
+        height={300}
+        loading="lazy"
+      />
 
       <div className="md:col-span-2">
         {products.slice(4, 5).map(({ id, title, price, rating, description, category, image }) => (
