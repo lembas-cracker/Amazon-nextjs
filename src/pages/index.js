@@ -35,11 +35,10 @@ export async function getServerSideProps(context) {
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
 
-  if (!session) {
+  if (!session.user) {
     return {
       props: {
         products: productsWithRatings,
-        session,
       },
     };
   }

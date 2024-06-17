@@ -1,5 +1,7 @@
+import { useSelector } from "react-redux";
 import db from "../../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { selectItems } from "../../../slices/basketSlice";
 
 const getBasket = async (email) => {
   try {
