@@ -1,19 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import basketReducer from "../slices/basketSlice";
 
-let store;
+export const createStore = (preloadedState) => {
+  return configureStore({
+    reducer: {
+      basket: basketReducer,
+    },
+    preloadedState,
+  });
 
-const createStore = (preloadedState) => {
-  if (typeof window === "undefined") {
-    return configureStore({
-      reducer: {
-        basket: basketReducer,
-      },
-      preloadedState,
-    });
-  }
-
-  if (!store) {
+  {
+    /* if (!store) {
     store = configureStore({
       reducer: {
         basket: basketReducer,
@@ -22,6 +19,6 @@ const createStore = (preloadedState) => {
     });
   }
   return store;
+  */
+  }
 };
-
-export default createStore;
