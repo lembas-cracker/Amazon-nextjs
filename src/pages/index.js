@@ -29,13 +29,14 @@ const getRandomRating = () => {
 };
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  const email = session?.user.email;
   const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
 
-  if (!session.user) {
+  const session = await getSession(context);
+  const email = session?.user?.email;
+  console.log("index.js getServerSideProps: session", session, "email", email);
+  if (!email) {
     return {
       props: {
         products: productsWithRatings,

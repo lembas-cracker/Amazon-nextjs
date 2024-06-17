@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
 import db from "../../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { selectItems } from "../../../slices/basketSlice";
 
 const getBasket = async (email) => {
   try {
@@ -9,6 +7,7 @@ const getBasket = async (email) => {
     const basketDoc = await getDoc(basketDocRef);
 
     if (basketDoc.exists) {
+      console.log("getBasket document data:", email, basketDoc.data());
       return { items: basketDoc.data().items };
     } else {
       return { items: [] };
