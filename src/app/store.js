@@ -8,17 +8,4 @@ export const createStore = (preloadedState) => {
     },
     preloadedState,
   });
-
-  {
-    /* if (!store) {
-    store = configureStore({
-      reducer: {
-        basket: basketReducer,
-      },
-      preloadedState,
-    });
-  }
-  return store;
-  */
-  }
 };
