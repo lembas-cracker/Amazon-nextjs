@@ -3,21 +3,17 @@ import Header from "../components/Header";
 import Banner from "../components/Banner";
 import ProductFeed from "../components/ProductFeed";
 import { getSession } from "next-auth/react";
+import getBasket from "../pages/api/basket/get";
 
 export default function Home({ products }) {
   return (
     <div className="bg-gray-100">
       <Head>
-        <title>Amazon 2.0</title>
+        <title>Amazing - Amazon 2.0</title>
       </Head>
-
       <Header />
-
       <main className="max-w-screen-2xl mx-auto">
-        {/*Banner*/}
         <Banner />
-
-        {/*Product Feed*/}
         <ProductFeed products={products} />
       </main>
     </div>
@@ -34,13 +30,28 @@ const getRandomRating = () => {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
+  const email = session?.user.email;
   const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
 
+  if (!session) {
+    return {
+      props: {
+        products: productsWithRatings,
+        session,
+      },
+    };
+  }
+
+  const initialState = {
+    basket: await getBasket(email),
+  };
+
   return {
     props: {
       products: productsWithRatings,
+      initialState,
       session,
     },
   };
