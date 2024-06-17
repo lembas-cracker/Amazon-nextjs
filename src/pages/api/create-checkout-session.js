@@ -15,7 +15,7 @@ export default async function handler(req, res) {
             images: [item.image],
           },
         },
-        quantity: 1,
+        quantity: item.quantity,
       }));
 
       const session = await stripe.checkout.sessions.create({
