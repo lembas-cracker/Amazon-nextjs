@@ -3,12 +3,14 @@ import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from "@heroicons/rea
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import { selectItems } from "../slices/basketSlice";
+import { selectItems, selectTotalQuantity } from "../slices/basketSlice";
 
 const Header = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const items = useSelector(selectItems);
+  const quantity = items.map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
+  const totalQuantity = useSelector(selectTotalQuantity);
 
   return (
     <header className="sticky top-0 z-50">
@@ -16,10 +18,12 @@ const Header = () => {
         <div className="h-[40px] w-[150px] relative mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
             onClick={() => router.push("/")}
-            src="https://links.papareact.com/f90"
-            alt="Fake Amazon"
+            src="https://i.imgur.com/CZrT9Ig.png"
+            width={150}
+            height={100}
+            alt="Amazing!"
             className="cursor-pointer object-contain"
-            layout="fill"
+            layout="intrinsic"
           />
         </div>
         {/*Search*/}
@@ -43,7 +47,7 @@ const Header = () => {
 
           <div onClick={() => router.push("/checkout")} className="link relative flex items-center">
             <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">
-              {items.length}
+              {!session && items.length > 0 ? items.length + quantity - 1 : totalQuantity}
             </span>
             <ShoppingCartIcon className="h-10" />
             <p className="hidden md:inline font-extrabold md:text-sm mt-2">Basket</p>
@@ -57,15 +61,13 @@ const Header = () => {
           <Bars3Icon className="h-6 mr-1" />
           All
         </p>
-        <p className="link">Prime Video</p>
-        <p className="link">Amazon Business</p>
-        <p className="link">Today's Deals</p>
-        <p className="link hidden lg:inline-flex">Electronics</p>
-        <p className="link hidden lg:inline-flex">Food & Grocery</p>
-        <p className="link hidden lg:inline-flex">Prime</p>
-        <p className="link hidden lg:inline-flex">Buy Again</p>
-        <p className="link hidden lg:inline-flex">Shopper Toolkit</p>
-        <p className="link hidden lg:inline-flex">Health & Personal Care</p>
+        <p className="font-extrabold">
+          Portfolio project with Next.js, Next-Auth, Redux Toolkit, Stripe test-mode payment and Firestore DB by Ksenia
+          Agalakova. See code here:
+        </p>
+        <a href="https://github.com/lembas-cracker/Amazon-nextjs" className="font-extrabold underline">
+          https://github.com/lembas-cracker/Amazon-nextjs
+        </a>
       </div>
     </header>
   );
