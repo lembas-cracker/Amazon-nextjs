@@ -83,17 +83,21 @@ const Checkout = () => {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  const email = session?.user.email;
-
-  if (!session) {
-    return {
-      props: {},
-    };
-  }
+  const email = session?.user?.email;
 
   const initialState = {
     basket: await getBasket(email),
   };
+
+  if (!email) {
+    return {
+      props: {
+        initialState: {
+          basket: items,
+        },
+      },
+    };
+  }
 
   return {
     props: {
