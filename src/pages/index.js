@@ -2,10 +2,47 @@ import Head from "next/head";
 import Header from "../components/Header";
 import Banner from "../components/Banner";
 import ProductFeed from "../components/ProductFeed";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import getBasket from "../pages/api/basket/get";
+import { saveBasket, setBasket } from "../slices/basketSlice";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 export default function Home({ products }) {
+  const dispatch = useDispatch();
+  const { data: session } = useSession();
+  const email = session?.user?.email;
+
+  useEffect(() => {
+    // Initialize the basket from the localStorage if not logged in
+    if (localStorage.getItem("items") && !session) {
+      const basket = JSON.parse(localStorage.getItem("items")) || [];
+      dispatch(setBasket(basket));
+    }
+
+    // Sync the local basket if just logged in with the basket in the database
+    const syncBasket = async () => {
+      if (localStorage.getItem("items") && session) {
+        const localItems = JSON.parse(localStorage.getItem("items"));
+        const syncedItems = await getBasket(session.user.email);
+        const combinedItems = [...syncedItems.items, ...localItems];
+
+        localStorage.removeItem("items");
+        dispatch(setBasket(combinedItems));
+        dispatch(saveBasket({ email, items: combinedItems }));
+      }
+    };
+
+    syncBasket();
+  }, []);
+
+  useEffect(() => {
+    // Clear the localStorage items when the user logs in
+    if (session) {
+      localStorage.removeItem("items");
+    }
+  }, [session]);
+
   return (
     <div className="bg-gray-100">
       <Head>
@@ -35,7 +72,6 @@ export async function getServerSideProps(context) {
 
   const session = await getSession(context);
   const email = session?.user?.email;
-  console.log("index.js getServerSideProps: session", session, "email", email);
   if (!email) {
     return {
       props: {
