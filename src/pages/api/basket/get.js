@@ -6,8 +6,7 @@ const getBasket = async (email) => {
     const basketDocRef = doc(db, "users", email, "basket", "basket");
     const basketDoc = await getDoc(basketDocRef);
 
-    if (basketDoc.exists) {
-      console.log("getBasket document data:", email, basketDoc.data());
+    if (basketDoc.exists()) {
       return { items: basketDoc.data().items };
     } else {
       return { items: [] };
