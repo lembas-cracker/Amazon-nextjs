@@ -8,8 +8,6 @@ import { selectItems, selectTotalQuantity } from "../slices/basketSlice";
 const Header = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const items = useSelector(selectItems);
-  const quantity = items.map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
   const totalQuantity = useSelector(selectTotalQuantity);
 
   return (
@@ -47,7 +45,7 @@ const Header = () => {
 
           <div onClick={() => router.push("/checkout")} className="link relative flex items-center">
             <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">
-              {!session && items.length > 0 ? items.length + quantity - 1 : totalQuantity}
+              {totalQuantity}
             </span>
             <ShoppingCartIcon className="h-10" />
             <p className="hidden md:inline font-extrabold md:text-sm mt-2">Basket</p>
