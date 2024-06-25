@@ -1,8 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createListenerMiddleware } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const saveBasket = createAsyncThunk("basket/saveBasket", async ({ email, items }, thunkAPI) => {
-  await axios.post("api/basket/save", { email, items });
+  if (email) {
+    await axios.post("api/basket/save", { email, items });
+  } else {
+    localStorage.setItem("items", JSON.stringify(items));
+  }
+
   return items;
 });
 
@@ -40,6 +45,9 @@ export const basketSlice = createSlice({
       //assigning modified basket copy to the global state to prevent mutability
       state.items = newBasket;
     },
+    setBasket: (state, action) => {
+      state.items = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(saveBasket.fulfilled, (state, action) => {
@@ -52,11 +60,15 @@ export const basketSlice = createSlice({
   },
 });
 
-export const { addToBasket, removeFromBasket } = basketSlice.actions;
+export const { addToBasket, removeFromBasket, setBasket } = basketSlice.actions;
 
 // Selectors - This is how we pull information from the Global store slice
 export const selectItems = (state) => state.basket.items;
-export const selectTotal = (state) => state.basket.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-export const selectTotalQuantity = (state) => state.basket.items?.map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
+
+export const selectTotal = (state) =>
+  (state.basket.items || []).reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+export const selectTotalQuantity = (state) =>
+  (state.basket.items || []).map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
 
 export default basketSlice.reducer;

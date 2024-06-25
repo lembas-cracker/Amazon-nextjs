@@ -23,20 +23,18 @@ const Product = ({ id, title, price, rating, description, category, image }) => 
 
     dispatch(addToBasket(product));
 
-    if (session) {
-      const updatedBasketItems = [...items];
+    const updatedBasketItems = [...items];
 
-      if (updatedBasketItems.some((item) => item.id === product.id)) {
-        const index = updatedBasketItems.findIndex((item) => item.id === product.id);
-        const existingItem = updatedBasketItems[index];
+    if (updatedBasketItems.some((item) => item.id === product.id)) {
+      const index = updatedBasketItems.findIndex((item) => item.id === product.id);
+      const existingItem = updatedBasketItems[index];
 
-        updatedBasketItems[index] = { ...existingItem, quantity: existingItem.quantity + 1 };
-      } else {
-        updatedBasketItems.push({ ...product, quantity: 1 });
-      }
-
-      dispatch(saveBasket({ email, items: updatedBasketItems }));
+      updatedBasketItems[index] = { ...existingItem, quantity: existingItem.quantity + 1 };
+    } else {
+      updatedBasketItems.push({ ...product, quantity: 1 });
     }
+
+    dispatch(saveBasket({ email, items: updatedBasketItems }));
   };
 
   return (
