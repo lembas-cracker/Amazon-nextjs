@@ -1,64 +1,32 @@
 import { StarIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import { addToBasket, removeFromBasket, saveBasket, selectItems } from "../slices/basketSlice";
+import { selectItems } from "../slices/basketSlice";
 import { useSession } from "next-auth/react";
 
-const CheckoutProduct = ({ id, title, price, rating, description, category, image }) => {
-  const dispatch = useDispatch();
-  const { data: session } = useSession();
+const CheckoutProduct = ({
+  id,
+  title,
+  price,
+  rating,
+  description,
+  category,
+  image,
+  handleRemoveItem,
+  handleAddItem,
+  handleDecrementItem,
+}) => {
   const status = useSelector((state) => state.basket.status);
-  const email = session?.user.email;
   const basketItems = useSelector(selectItems);
   const item = basketItems.find((item) => item.id === id);
   const counter = item.quantity;
-
-  const addItemToBasket = () => {
-    const product = {
-      id,
-      title,
-      price,
-      rating,
-      description,
-      category,
-      image,
-    };
-
-    //pushing items into the redux state
-    dispatch(addToBasket(product));
-
-    if (session) {
-      const updatedBasketItems = basketItems.map((basketItem) =>
-        basketItem.id === product.id ? { ...basketItem, quantity: basketItem.quantity + 1 } : basketItem
-      );
-
-      dispatch(saveBasket({ email, items: updatedBasketItems }));
-    }
-  };
-
-  const removeItemFromBasket = () => {
-    dispatch(removeFromBasket({ id }));
-
-    if (session) {
-      const updatedBasketItems = basketItems
-        .map((basketItem) =>
-          basketItem.id === id
-            ? basketItem.quantity > 1
-              ? { ...basketItem, quantity: basketItem.quantity - 1 }
-              : null
-            : basketItem
-        )
-        .filter((item) => item !== null);
-
-      dispatch(saveBasket({ email, items: updatedBasketItems }));
-    }
-  };
 
   return (
     <div className="grid grid-cols-5">
       <Image src={image} height={200} width={200} objectFit="contain" />
 
       <div className="col-span-3 mx-5">
+        <p className="text-xs text-gray-500">{category}</p>
         <p>{title}</p>
         <div className="flex">
           {Array(rating)
@@ -76,17 +44,17 @@ const CheckoutProduct = ({ id, title, price, rating, description, category, imag
         <div className="flex flex-row gap-2 items-center px-2 justify-evenly">
           <button
             className={`button px-5 ${counter === 1 && "cursor-default opacity-50"}`}
-            onClick={removeItemFromBasket}
+            onClick={handleDecrementItem}
             disabled={counter <= 1 || status === "loading"}
           >
             -
           </button>
           {counter}
-          <button className="button px-5" onClick={addItemToBasket}>
+          <button className="button px-5" onClick={handleAddItem}>
             +
           </button>
         </div>
-        <button className="button" onClick={removeItemFromBasket}>
+        <button className="button" onClick={handleRemoveItem}>
           Remove From Basket
         </button>
       </div>

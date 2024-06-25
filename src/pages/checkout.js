@@ -1,16 +1,118 @@
 import Header from "../components/Header";
 import Image from "next/image";
-import { useSelector } from "react-redux";
-import { selectItems, selectTotal, selectTotalQuantity } from "../slices/basketSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToBasket,
+  removeFromBasket,
+  saveBasket,
+  selectItems,
+  selectTotal,
+  selectTotalQuantity,
+  setBasket,
+} from "../slices/basketSlice";
 import CheckoutProduct from "../components/CheckoutProduct";
 import { getSession, useSession } from "next-auth/react";
 import getBasket from "../pages/api/basket/get";
+import { useEffect } from "react";
 
 const Checkout = () => {
+  const dispatch = useDispatch();
   const items = useSelector(selectItems);
   const totalQuantity = useSelector(selectTotalQuantity);
   const total = useSelector(selectTotal);
   const { data: session } = useSession();
+  const email = session?.user?.email;
+
+  useEffect(() => {
+    // Initialize the basket state from the localStorage if not logged in
+    if (localStorage.getItem("items") && !session) {
+      const basket = JSON.parse(localStorage.getItem("items"));
+      dispatch(setBasket(basket));
+    }
+    // Sync the basket if just logged in
+    const syncBasket = async () => {
+      if (localStorage.getItem("items") && session) {
+        const localItems = JSON.parse(localStorage.getItem("items"));
+        const syncedItems = await getBasket(session.user.email);
+        const combinedItems = [...syncedItems.items, ...localItems];
+
+        localStorage.removeItem("items");
+        dispatch(setBasket(combinedItems));
+        dispatch(saveBasket({ email, items: combinedItems }));
+      }
+    };
+
+    syncBasket();
+  }, []);
+
+  const handleAddItem = (item) => {
+    //pushing items into the redux state
+    dispatch(addToBasket(item));
+
+    const updatedBasketItems = items.map((basketItem) =>
+      basketItem.id === item.id ? { ...basketItem, quantity: basketItem.quantity + 1 } : basketItem
+    );
+
+    dispatch(saveBasket({ email, items: updatedBasketItems }));
+  };
+
+  const handleRemoveItem = (id) => {
+    dispatch(removeFromBasket(id));
+
+    if (session) {
+      const updatedBasketItems = items
+        .map((basketItem) => (basketItem.id === id ? null : basketItem))
+        .filter((item) => item !== null);
+
+      dispatch(saveBasket({ email, items: updatedBasketItems }));
+    } else {
+      const localBasket = JSON.parse(localStorage.getItem("items"));
+
+      const updatedLocalBasket = localBasket
+        .map((localItem) => (localItem.id === id ? null : localItem))
+        .filter((item) => item !== null);
+
+      if (updatedLocalBasket.length === 0) {
+        localStorage.removeItem("items");
+      } else {
+        localStorage.setItem("items", JSON.stringify(updatedLocalBasket));
+      }
+    }
+  };
+
+  const handleDecrementItem = (id) => {
+    if (session) {
+      const updatedBasketItems = items
+        .map((basketItem) =>
+          basketItem.id === id
+            ? basketItem.quantity > 1
+              ? { ...basketItem, quantity: basketItem.quantity - 1 }
+              : null
+            : basketItem
+        )
+        .filter((item) => item !== null);
+
+      dispatch(saveBasket({ email, items: updatedBasketItems }));
+    } else {
+      const localBasket = JSON.parse(localStorage.getItem("items"));
+
+      const updatedLocalBasket = localBasket
+        .map((localItem) =>
+          localItem.id === id
+            ? localItem.quantity > 1
+              ? { ...localItem, quantity: localItem.quantity - 1 }
+              : null
+            : localItem
+        )
+        .filter((item) => item !== null);
+
+      if (updatedLocalBasket.length === 0) {
+        localStorage.removeItem("items");
+      } else {
+        localStorage.setItem("items", JSON.stringify(updatedLocalBasket));
+      }
+    }
+  };
 
   return (
     <div className="bg-gray-100">
@@ -40,6 +142,9 @@ const Checkout = () => {
                 description={item.description}
                 category={item.category}
                 image={item.image}
+                handleRemoveItem={() => handleRemoveItem(item.id)}
+                handleDecrementItem={() => handleDecrementItem(item.id)}
+                handleAddItem={() => handleAddItem(item)}
               />
             ))}
           </div>
@@ -85,19 +190,15 @@ export async function getServerSideProps(context) {
   const session = await getSession(context);
   const email = session?.user?.email;
 
+  if (!email) {
+    return {
+      props: {},
+    };
+  }
+
   const initialState = {
     basket: await getBasket(email),
   };
-
-  if (!email) {
-    return {
-      props: {
-        initialState: {
-          basket: items,
-        },
-      },
-    };
-  }
 
   return {
     props: {
