@@ -2,7 +2,6 @@ import moment from "moment";
 
 const Order = ({ id, amount, amountShipping, items, timestamp, images }) => {
   const quantity = items.map((e) => e.quantity).reduce((acc, e) => acc + e, 0);
-  console.log(quantity);
 
   return (
     <div className="relative border rounded-md">
