@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, createListenerMiddleware } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const saveBasket = createAsyncThunk("basket/saveBasket", async ({ email, items }, thunkAPI) => {
+export const saveBasket = createAsyncThunk("basket/saveBasket", async ({ email, items }) => {
   if (email) {
     await axios.post("api/basket/save", { email, items });
   } else {

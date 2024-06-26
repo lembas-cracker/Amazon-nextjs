@@ -12,9 +12,9 @@ const CheckoutProduct = ({
   description,
   category,
   image,
-  handleRemoveItem,
-  handleAddItem,
-  handleDecrementItem,
+  onRemoveItem,
+  onIncrementItem,
+  onDecrementItem,
 }) => {
   const status = useSelector((state) => state.basket.status);
   const basketItems = useSelector(selectItems);
@@ -44,17 +44,17 @@ const CheckoutProduct = ({
         <div className="flex flex-row gap-2 items-center px-2 justify-evenly">
           <button
             className={`button px-5 ${counter === 1 && "cursor-default opacity-50"}`}
-            onClick={handleDecrementItem}
+            onClick={onDecrementItem}
             disabled={counter <= 1 || status === "loading"}
           >
             -
           </button>
           {counter}
-          <button className="button px-5" onClick={handleAddItem}>
+          <button className="button px-5" onClick={onIncrementItem}>
             +
           </button>
         </div>
-        <button className="button" onClick={handleRemoveItem}>
+        <button className="button" onClick={onRemoveItem}>
           Remove From Basket
         </button>
       </div>

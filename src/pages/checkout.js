@@ -29,6 +29,7 @@ const Checkout = () => {
       const basket = JSON.parse(localStorage.getItem("items"));
       dispatch(setBasket(basket));
     }
+
     // Sync the basket if just logged in
     const syncBasket = async () => {
       if (localStorage.getItem("items") && session) {
@@ -37,7 +38,6 @@ const Checkout = () => {
         const combinedItems = [...syncedItems.items, ...localItems];
 
         localStorage.removeItem("items");
-        dispatch(setBasket(combinedItems));
         dispatch(saveBasket({ email, items: combinedItems }));
       }
     };
@@ -45,10 +45,7 @@ const Checkout = () => {
     syncBasket();
   }, []);
 
-  const handleAddItem = (item) => {
-    //pushing items into the redux state
-    dispatch(addToBasket(item));
-
+  const handleIncrementItem = (item) => {
     const updatedBasketItems = items.map((basketItem) =>
       basketItem.id === item.id ? { ...basketItem, quantity: basketItem.quantity + 1 } : basketItem
     );
@@ -57,61 +54,25 @@ const Checkout = () => {
   };
 
   const handleRemoveItem = (id) => {
-    dispatch(removeFromBasket(id));
+    const updatedBasketItems = items
+      .map((basketItem) => (basketItem.id === id ? null : basketItem))
+      .filter((item) => item !== null);
 
-    if (session) {
-      const updatedBasketItems = items
-        .map((basketItem) => (basketItem.id === id ? null : basketItem))
-        .filter((item) => item !== null);
-
-      dispatch(saveBasket({ email, items: updatedBasketItems }));
-    } else {
-      const localBasket = JSON.parse(localStorage.getItem("items"));
-
-      const updatedLocalBasket = localBasket
-        .map((localItem) => (localItem.id === id ? null : localItem))
-        .filter((item) => item !== null);
-
-      if (updatedLocalBasket.length === 0) {
-        localStorage.removeItem("items");
-      } else {
-        localStorage.setItem("items", JSON.stringify(updatedLocalBasket));
-      }
-    }
+    dispatch(saveBasket({ email, items: updatedBasketItems }));
   };
 
   const handleDecrementItem = (id) => {
-    if (session) {
-      const updatedBasketItems = items
-        .map((basketItem) =>
-          basketItem.id === id
-            ? basketItem.quantity > 1
-              ? { ...basketItem, quantity: basketItem.quantity - 1 }
-              : null
-            : basketItem
-        )
-        .filter((item) => item !== null);
+    const updatedBasketItems = items
+      .map((basketItem) =>
+        basketItem.id === id
+          ? basketItem.quantity > 1
+            ? { ...basketItem, quantity: basketItem.quantity - 1 }
+            : null
+          : basketItem
+      )
+      .filter((item) => item !== null);
 
-      dispatch(saveBasket({ email, items: updatedBasketItems }));
-    } else {
-      const localBasket = JSON.parse(localStorage.getItem("items"));
-
-      const updatedLocalBasket = localBasket
-        .map((localItem) =>
-          localItem.id === id
-            ? localItem.quantity > 1
-              ? { ...localItem, quantity: localItem.quantity - 1 }
-              : null
-            : localItem
-        )
-        .filter((item) => item !== null);
-
-      if (updatedLocalBasket.length === 0) {
-        localStorage.removeItem("items");
-      } else {
-        localStorage.setItem("items", JSON.stringify(updatedLocalBasket));
-      }
-    }
+    dispatch(saveBasket({ email, items: updatedBasketItems }));
   };
 
   return (
@@ -142,9 +103,9 @@ const Checkout = () => {
                 description={item.description}
                 category={item.category}
                 image={item.image}
-                handleRemoveItem={() => handleRemoveItem(item.id)}
-                handleDecrementItem={() => handleDecrementItem(item.id)}
-                handleAddItem={() => handleAddItem(item)}
+                onRemoveItem={() => handleRemoveItem(item.id)}
+                onDecrementItem={() => handleDecrementItem(item.id)}
+                onIncrementItem={() => handleIncrementItem(item)}
               />
             ))}
           </div>

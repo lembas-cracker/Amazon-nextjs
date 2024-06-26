@@ -21,16 +21,11 @@ const Product = ({ id, title, price, rating, description, category, image }) => 
       image,
     };
 
-    dispatch(addToBasket(product));
+    const updatedBasketItems = items.map((basketItem) =>
+      basketItem.id === product.id ? { ...basketItem, quantity: basketItem.quantity + 1 } : basketItem
+    );
 
-    const updatedBasketItems = [...items];
-
-    if (updatedBasketItems.some((item) => item.id === product.id)) {
-      const index = updatedBasketItems.findIndex((item) => item.id === product.id);
-      const existingItem = updatedBasketItems[index];
-
-      updatedBasketItems[index] = { ...existingItem, quantity: existingItem.quantity + 1 };
-    } else {
+    if (updatedBasketItems.every((item) => item.id !== product.id)) {
       updatedBasketItems.push({ ...product, quantity: 1 });
     }
 

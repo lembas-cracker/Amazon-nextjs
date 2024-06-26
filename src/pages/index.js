@@ -16,7 +16,7 @@ export default function Home({ products }) {
   useEffect(() => {
     // Initialize the basket from the localStorage if not logged in
     if (localStorage.getItem("items") && !session) {
-      const basket = JSON.parse(localStorage.getItem("items")) || [];
+      const basket = JSON.parse(localStorage.getItem("items"));
       dispatch(setBasket(basket));
     }
 
@@ -28,20 +28,12 @@ export default function Home({ products }) {
         const combinedItems = [...syncedItems.items, ...localItems];
 
         localStorage.removeItem("items");
-        dispatch(setBasket(combinedItems));
         dispatch(saveBasket({ email, items: combinedItems }));
       }
     };
 
     syncBasket();
   }, []);
-
-  useEffect(() => {
-    // Clear the localStorage items when the user logs in
-    if (session) {
-      localStorage.removeItem("items");
-    }
-  }, [session]);
 
   return (
     <div className="bg-gray-100">
