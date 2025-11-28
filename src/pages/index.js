@@ -8,6 +8,8 @@ import { saveBasket, setBasket } from "../slices/basketSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 
+import FAKE_PRODUCTS from "./_fake-products";
+
 export default function Home({ products }) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
@@ -58,16 +60,14 @@ const getRandomRating = () => {
 };
 
 export async function getServerSideProps(context) {
-  console.log("getServerSideProps: before fetch");
-  console.log(await (await fetch("https://fakestoreapi.com/products")).text());
-  const products = await (await fetch("https://fakestoreapi.com/products")).json();
-  console.log("getServerSideProps: after fetch");
+  // Returns Cloudflare challenge HTML on Versel servers, but not on localhost.
+  // Replacing with a static response.
+  // const products = await (await fetch("https://fakestoreapi.com/products")).json();
+  const products = FAKE_PRODUCTS;
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
 
-  console.log("getServerSideProps: before getSession");
   const session = await getSession(context);
-  console.log("getServerSideProps: after getSession");
   const email = session?.user?.email;
   if (!email) {
     return {
@@ -77,11 +77,9 @@ export async function getServerSideProps(context) {
     };
   }
 
-  console.log("getServerSideProps: before getBasket");
   const initialState = {
     basket: await getBasket(email),
   };
-  console.log("getServerSideProps: after getBasket");
 
   return {
     props: {
