@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
-import { addToBasket, saveBasket, selectItems } from "../slices/basketSlice";
+import { saveBasket, selectItems } from "../slices/basketSlice";
 import { useSession } from "next-auth/react";
 
 const Product = ({ id, title, price, rating, description, category, image }) => {

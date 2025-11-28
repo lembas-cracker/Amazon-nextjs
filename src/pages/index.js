@@ -58,11 +58,15 @@ const getRandomRating = () => {
 };
 
 export async function getServerSideProps(context) {
+  console.log("getServerSideProps: before fetch");
   const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
+  console.log("getServerSideProps: after fetch");
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
 
+  console.log("getServerSideProps: before getSession");
   const session = await getSession(context);
+  console.log("getServerSideProps: after getSession");
   const email = session?.user?.email;
   if (!email) {
     return {
@@ -72,9 +76,11 @@ export async function getServerSideProps(context) {
     };
   }
 
+  console.log("getServerSideProps: before getBasket");
   const initialState = {
     basket: await getBasket(email),
   };
+  console.log("getServerSideProps: after getBasket");
 
   return {
     props: {

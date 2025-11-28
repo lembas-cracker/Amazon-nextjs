@@ -1,15 +1,7 @@
 import Header from "../components/Header";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToBasket,
-  removeFromBasket,
-  saveBasket,
-  selectItems,
-  selectTotal,
-  selectTotalQuantity,
-  setBasket,
-} from "../slices/basketSlice";
+import { saveBasket, selectItems, selectTotal, selectTotalQuantity, setBasket } from "../slices/basketSlice";
 import CheckoutProduct from "../components/CheckoutProduct";
 import { getSession, useSession } from "next-auth/react";
 import getBasket from "../pages/api/basket/get";

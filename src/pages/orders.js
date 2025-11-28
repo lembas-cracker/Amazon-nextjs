@@ -67,7 +67,7 @@ export async function getServerSideProps(context) {
   const orderArray = await stripeOrders();
 
   //stripe orders
-  const orders = [];
+  let orders = [];
   for (const order of orderArray) {
     const orderData = {
       id: order.id,
