@@ -8,7 +8,7 @@ import { saveBasket, setBasket } from "../slices/basketSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 
-import FAKE_PRODUCTS from "./_fake-products";
+import FAKE_PRODUCTS from "../_fake-products";
 
 export default function Home({ products }) {
   const dispatch = useDispatch();
