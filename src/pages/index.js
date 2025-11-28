@@ -59,7 +59,8 @@ const getRandomRating = () => {
 
 export async function getServerSideProps(context) {
   console.log("getServerSideProps: before fetch");
-  const products = await fetch("https://fakestoreapi.com/products").then((res) => res.json());
+  console.log(await (await fetch("https://fakestoreapi.com/products")).text());
+  const products = await (await fetch("https://fakestoreapi.com/products")).json();
   console.log("getServerSideProps: after fetch");
 
   const productsWithRatings = products.map((product) => ({ ...product, rating: getRandomRating() }));
